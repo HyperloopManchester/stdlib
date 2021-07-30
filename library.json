@@ -1,0 +1,16 @@
+{
+	"name": "stdlib",
+	"description": "standard library for the manchester hyperloop pod",
+	"version": "0.1.0",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/manchester-hyperloop/stdlib.git"
+	},
+	"author": {
+		"name": "Manchester Hyperloop",
+		"url": "https://github.com/manchester-hyperloop",
+		"maintainer": true
+	},
+	"frameworks": "*",
+	"platforms": "*"
+}
