@@ -1,6 +1,6 @@
-#ifndef STDLIB_H
-#define STDLIB_H
+#ifndef HYPERMAN_STDLIB_H
+#define HYPERMAN_STDLIB_H
 
 int stdlib_add(int a, int b);
 
-#endif // STDLIB_H
+#endif // HYPERMAN_STDLIB_H
