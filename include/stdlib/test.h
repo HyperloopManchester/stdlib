@@ -12,27 +12,37 @@
 	printf("*************** %s ***************\n", __FILE__); \
 	return test_result;
 
-#define PASS() return 1;
-#define FAIL() return 0;
+#define PASS() return 0;
+#define FAIL() return 1;
 
-#define TEST(test_name) int test_name(void)
+#define TEST(name) int name(void)
 
-#define TEST_RUN(test) \
+#define TEST_RUN(name) \
 { \
-	printf("%s: ", #test); \
-	if (test()) { \
-		printf("OK\n"); \
-	} else { \
+	printf("%s: ", #name); \
+	if (name()) { \
 		printf("FAILED\n"); \
 		test_result = 1; \
+	} else { \
+		printf("OK\n"); \
 	} \
 }
 
 /* Assertions */
-#define TEST_ASSERT(condition, message) \
-	assert((condition) && message);
+#define ASSERT(condition, message) \
+{ \
+	if (!(condition)) { \
+		printf("%s\n", message); \
+		FAIL(); \
+	} \
+}
 
-#define TEST_ASSERT_NE(condition, message) \
-	assert(!(condition) && message);
+#define ASSERT_NE(condition, message) \
+{ \
+	if ((condition)) { \
+		printf("%s\n", message); \
+		FAIL(); \
+	} \
+}
 
-#endif // HYPERMAN_STDLIB_TEST_H
+#endif /* HYPERMAN_STDLIB_TEST_H */

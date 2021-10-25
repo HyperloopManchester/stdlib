@@ -3,4 +3,4 @@
 
 int stdlib_add(int a, int b);
 
-#endif // HYPERMAN_STDLIB_H
+#endif /* HYPERMAN_STDLIB_H */
