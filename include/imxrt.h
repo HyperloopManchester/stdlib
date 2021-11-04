@@ -169,9 +169,27 @@ enum IRQ_NUMBER_t {
         IRQ_SJC_DEBUG =         158,
         IRQ_NMI_WAKEUP =        159
 };
+#define NVIC_NUM_EXCEPTIONS     16
 #define NVIC_NUM_INTERRUPTS     160
 #define DMA_NUM_CHANNELS        32
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern void (*volatile interrupt_vector_table[NVIC_NUM_INTERRUPTS + NVIC_NUM_EXCEPTIONS])(void);
+
+__attribute__ ((always_inline, unused))
+static inline void attachInterruptVector(enum IRQ_NUMBER_t irq, void (*isr)(void));
+
+static inline void attachInterruptVector(enum IRQ_NUMBER_t irq, void (*isr)(void)) {
+	interrupt_vector_table[irq + NVIC_NUM_EXCEPTIONS] = isr;
+	__asm__ volatile ("": : :"memory");
+}
+
+#ifdef __cplusplus
+};
+#endif
 
 #define DMAMUX_SOURCE_FLEXIO1_REQUEST0		0
 #define DMAMUX_SOURCE_FLEXIO1_REQUEST1		0
@@ -427,20 +445,6 @@ enum IRQ_NUMBER_t {
 #define IMXRT_XBARB2_ADDRESS		0x403C0000
 #define IMXRT_XBARB3_ADDRESS		0x403C4000
 #define IMXRT_XTALOSC24M_ADDRESS	0x400D8000
-
-
-
-
-
-#ifdef __cplusplus
-extern "C" void (* volatile _VectorsRam[NVIC_NUM_INTERRUPTS+16])(void);
-static inline void attachInterruptVector(IRQ_NUMBER_t irq, void (*function)(void)) __attribute__((always_inline, unused));
-static inline void attachInterruptVector(IRQ_NUMBER_t irq, void (*function)(void)) { _VectorsRam[irq + 16] = function; asm volatile("": : :"memory"); }
-#else
-extern void (* volatile _VectorsRam[NVIC_NUM_INTERRUPTS+16])(void);
-static inline void attachInterruptVector(enum IRQ_NUMBER_t irq, void (*function)(void)) __attribute__((always_inline, unused));
-static inline void attachInterruptVector(enum IRQ_NUMBER_t irq, void (*function)(void)) { _VectorsRam[irq + 16] = function; asm volatile("": : :"memory"); }
-#endif
 
 typedef struct {
 	volatile uint32_t offset000;
@@ -8201,7 +8205,7 @@ typedef struct
 #define I2S_RCR2_DIV(n)			((uint32_t)n & 0xff)	// Bit clock divide by (DIV+1)*2
 #define I2S_RCR2_BCD			((uint32_t)1<<24)	// Bit clock direction
 #define I2S_RCR2_MSEL(n)		((uint32_t)(n & 3)<<26)	// MCLK select, 0=bus clock, 1=I2S0_MCLK
-#define I2S_RCR2_SYNC(n)		((uint32_t)(n & 3)<<30)	// 0=async 1=sync with trasmitter
+#define I2S_RCR2_SYNC(n)		((uint32_t)(n & 3)<<30)	// 0=async 1=sync with tr__asm__itter
 #define I2S_RCR3_RCE			((uint32_t)0x10000)	// receive channel enable
 #define I2S_RCR3_RCE_2CH		((uint32_t)0x30000)
 #define I2S_RCR3_RCE_3CH		((uint32_t)0x70000)
@@ -9658,8 +9662,8 @@ These register are used by the ROM code and should not be used by application so
 #define NVIC_GET_PRIORITY(irqnum) (*((uint8_t *)0xE000E400 + (irqnum)))
 
 
-#define __disable_irq() __asm__ volatile("CPSID i":::"memory");
-#define __enable_irq()  __asm__ volatile("CPSIE i":::"memory");
+#define __disable_irq() ____asm____ volatile("CPSID i":::"memory");
+#define __enable_irq()  ____asm____ volatile("CPSIE i":::"memory");
 
 
 // System Control Space (SCS), ARMv7 ref manual, B3.2, page 708
@@ -9813,14 +9817,14 @@ static inline void arm_dcache_flush(void *addr, uint32_t size)
 {
 	uint32_t location = (uint32_t)addr & 0xFFFFFFE0;
 	uint32_t end_addr = (uint32_t)addr + size;
-	asm volatile("": : :"memory");
-	asm("dsb");
+	__asm__ volatile("": : :"memory");
+	__asm__("dsb");
 	do {
 		SCB_CACHE_DCCMVAC = location;
 		location += 32;
 	} while (location < end_addr);
-	asm("dsb");
-	asm("isb");
+	__asm__("dsb");
+	__asm__("isb");
 }
 
 // Delete data from the cache, without touching memory
@@ -9852,14 +9856,14 @@ static inline void arm_dcache_delete(void *addr, uint32_t size)
 {
 	uint32_t location = (uint32_t)addr & 0xFFFFFFE0;
 	uint32_t end_addr = (uint32_t)addr + size;
-	asm volatile("": : :"memory");
-	asm("dsb");
+	__asm__ volatile("": : :"memory");
+	__asm__("dsb");
 	do {
 		SCB_CACHE_DCIMVAC = location;
 		location += 32;
 	} while (location < end_addr);
-	asm("dsb");
-	asm("isb");
+	__asm__("dsb");
+	__asm__("isb");
 }
 
 // Flush data from cache to memory, and delete it from the cache
@@ -9873,14 +9877,14 @@ static inline void arm_dcache_flush_delete(void *addr, uint32_t size)
 {
 	uint32_t location = (uint32_t)addr & 0xFFFFFFE0;
 	uint32_t end_addr = (uint32_t)addr + size;
-	asm volatile("": : :"memory");
-	asm("dsb");
+	__asm__ volatile("": : :"memory");
+	__asm__("dsb");
 	do {
 		SCB_CACHE_DCCIMVAC = location;
 		location += 32;
 	} while (location < end_addr);
-	asm("dsb");
-	asm("isb");
+	__asm__("dsb");
+	__asm__("isb");
 }
 
 // Crash report info stored in the top 128 bytes of OCRAM (at 0x2027FF80)
