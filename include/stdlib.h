@@ -49,6 +49,10 @@ struct wstr_t {
 #define FLASHMEM __attribute__ ((section(".flash")))
 #define EXTMEM __attribute__ ((section(".extmem")))
 
+/* global variables */
+extern volatile u32 CPU_FREQ;
+extern volatile u32 BUS_FREQ;
+
 int stdlib_add(int a, int b);
 
 #endif /* HYPERMAN_STDLIB_H */

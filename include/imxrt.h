@@ -1,5 +1,5 @@
-#ifndef HYPERMAN_STDLIB_IMXRT_H
-#define HYPERMAN_STDLIB_IMXRT_H
+#ifndef HYPERMAN_IMXRT_H
+#define HYPERMAN_IMXRT_H
 
 #include <stdint.h>
 
@@ -177,14 +177,14 @@ enum IRQ_NUMBER_t {
 extern "C" {
 #endif
 
-extern void (*volatile interrupt_vector_table[NVIC_NUM_INTERRUPTS + NVIC_NUM_EXCEPTIONS])(void);
+typedef void (*volatile nvic_isr_t)(void);
+extern nvic_isr_t interrupt_vector_table[NVIC_NUM_INTERRUPTS + NVIC_NUM_EXCEPTIONS];
 
 __attribute__ ((always_inline, unused))
 static inline void attachInterruptVector(enum IRQ_NUMBER_t irq, void (*isr)(void));
-
 static inline void attachInterruptVector(enum IRQ_NUMBER_t irq, void (*isr)(void)) {
 	interrupt_vector_table[irq + NVIC_NUM_EXCEPTIONS] = isr;
-	__asm__ volatile ("": : :"memory");
+	__asm__ volatile ("":::"memory");
 }
 
 #ifdef __cplusplus
@@ -9662,8 +9662,8 @@ These register are used by the ROM code and should not be used by application so
 #define NVIC_GET_PRIORITY(irqnum) (*((uint8_t *)0xE000E400 + (irqnum)))
 
 
-#define __disable_irq() ____asm____ volatile("CPSID i":::"memory");
-#define __enable_irq()  ____asm____ volatile("CPSIE i":::"memory");
+#define __disable_irq() __asm__ volatile("CPSID i":::"memory");
+#define __enable_irq()  __asm__ volatile("CPSIE i":::"memory");
 
 
 // System Control Space (SCS), ARMv7 ref manual, B3.2, page 708
@@ -9902,4 +9902,4 @@ struct arm_fault_info_struct {
 	uint32_t crc;  // crc must be last
 };
 
-#endif /* HYPERMAN_STDLIB_IMXRT_H */
+#endif /* HYPERMAN_IMXRT_H */
