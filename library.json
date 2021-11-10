@@ -4,11 +4,11 @@
 	"version": "0.1.0",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/manchester-hyperloop/stdlib.git"
+		"url": "https://github.com/HyperloopManchester/stdlib.git"
 	},
 	"author": {
-		"name": "Manchester Hyperloop",
-		"url": "https://github.com/manchester-hyperloop",
+		"name": "Hyperloop Manchester",
+		"url": "https://github.com/HyperloopManchester",
 		"maintainer": true
 	},
 	"frameworks": "*",
