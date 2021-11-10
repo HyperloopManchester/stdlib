@@ -303,8 +303,13 @@ nvic_isr_t interrupt_vector_table[NVIC_NUM_EXCEPTIONS + NVIC_NUM_INTERRUPTS] = {
 
 /* helper functions
  */
-static inline void memcpy(u32 *restrict dst, u32 *restrict dstend, const u32 *restrict src);
-static inline void memset(u32 *restrict dst, u32 *restrict dstend, const u32 val);
+static inline void section_copy(u32 *restrict dst,
+				u32 *const restrict dstend,
+				const u32 *restrict src);
+
+static inline void section_init(u32 *restrict dst,
+				u32 *const restrict dstend,
+				const u32 val);
 
 static inline void reset_clock_dividers(void);
 static inline void initialise_cache(void);
@@ -347,11 +352,11 @@ void reset(void) {
 	/* copy over instructions from flash to ITCM module, and variables
 	 * from flash to DTCM module
 	 */
-	memcpy(&_itcm_start_ptr, &_itcm_end_ptr, &_itcm_data_start_ptr);
-	memcpy(&_dtcm_start_ptr, &_dtcm_end_ptr, &_dtcm_data_start_ptr);
+	section_copy(&_itcm_start_ptr, &_itcm_end_ptr, &_itcm_data_start_ptr);
+	section_copy(&_dtcm_start_ptr, &_dtcm_end_ptr, &_dtcm_data_start_ptr);
 
 	/* clear bss area in flash */
-	memset(&_bss_start_ptr, &_bss_end_ptr, 0);
+	section_init(&_bss_start_ptr, &_bss_end_ptr, 0);
 
 	/* reset external interrupts in NVIC */
 	for (size_t i = 0; i < NVIC_NUM_INTERRUPTS; i++) {
@@ -583,25 +588,27 @@ void unused_interrupt_handler(void) {
 	while (1) __asm__ ("wfi");
 }
 
-/* copies words starting from src into the region bounded by dst and dstend
+/* copies words from src into the memory region bounded by dst and dstend
  */
 __attribute__ ((section(".startup_code")))
-static inline void memcpy(u32 *restrict dst, u32 *restrict dstend, const u32 *restrict src) {
-	/* we cannot copy zero bytes or less, so ignore the call
-	 */
-	if (dst >= dstend) return;
+static inline void section_copy(u32 *restrict dst,
+				u32 *const restrict dstend,
+				const u32 *restrict src)
+{
+	if (dstend <= dst) return; /* cannot copy zero or less words */
 
 	while (dst < dstend)
 		*dst++ = *src++;
 }
 
-/* copies the given value into the region bounded by dst and dstend
+/* sets words in the memory region bounded by dst and dstend to the given value
  */
 __attribute__ ((section(".startup_code")))
-static inline void memset(u32 *restrict dst, u32 *restrict dstend, const u32 val) {
-	/* we cannot set zero bytes or less, so ignore the call
-	 */
-	if (dst >= dstend) return;
+static inline void section_init(u32 *restrict dst,
+				u32 *const restrict dstend,
+				const u32 val)
+{
+	if (dstend <= dst) return; /* cannot copy zero or less words */
 
 	while (dst < dstend)
 		*dst++ = val;

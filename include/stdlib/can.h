@@ -1,0 +1,4 @@
+#ifndef HYPERMAN_STDLIB_CAN_H
+#define HYPERMAN_STDLIB_CAN_H
+
+#endif /* HYPERMAN_STDLIB_CAN_H */

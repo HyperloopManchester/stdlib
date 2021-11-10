@@ -9815,8 +9815,8 @@ These register are used by the ROM code and should not be used by application so
 __attribute__((always_inline, unused))
 static inline void arm_dcache_flush(void *addr, uint32_t size)
 {
-	uint32_t location = (uint32_t)addr & 0xFFFFFFE0;
-	uint32_t end_addr = (uint32_t)addr + size;
+	intptr_t location = (intptr_t)addr & 0xFFFFFFE0;
+	intptr_t end_addr = (intptr_t)addr + size;
 	__asm__ volatile("": : :"memory");
 	__asm__("dsb");
 	do {
@@ -9854,8 +9854,8 @@ static inline void arm_dcache_flush(void *addr, uint32_t size)
 __attribute__((always_inline, unused))
 static inline void arm_dcache_delete(void *addr, uint32_t size)
 {
-	uint32_t location = (uint32_t)addr & 0xFFFFFFE0;
-	uint32_t end_addr = (uint32_t)addr + size;
+	intptr_t location = (intptr_t)addr & 0xFFFFFFE0;
+	intptr_t end_addr = (intptr_t)addr + size;
 	__asm__ volatile("": : :"memory");
 	__asm__("dsb");
 	do {
@@ -9875,8 +9875,8 @@ static inline void arm_dcache_delete(void *addr, uint32_t size)
 __attribute__((always_inline, unused))
 static inline void arm_dcache_flush_delete(void *addr, uint32_t size)
 {
-	uint32_t location = (uint32_t)addr & 0xFFFFFFE0;
-	uint32_t end_addr = (uint32_t)addr + size;
+	intptr_t location = (intptr_t)addr & 0xFFFFFFE0;
+	intptr_t end_addr = (intptr_t)addr + size;
 	__asm__ volatile("": : :"memory");
 	__asm__("dsb");
 	do {

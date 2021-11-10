@@ -1,9 +1,13 @@
 #ifndef HYPERMAN_STDLIB_H
 #define HYPERMAN_STDLIB_H
 
-#include <stdint.h>
+#include "imxrt.h"
+#include "imxrt_pins.h"
+
+#include <stdalign.h>
+#include <stdbool.h>
 #include <stddef.h>
-#include <stdarg.h>
+#include <stdint.h>
 #include <stdnoreturn.h>
 
 /* Integral types */
@@ -24,14 +28,27 @@ typedef double   f64;
 
 /* String types */
 struct str_t {
-	char *str;
+	char *str; /* null terminated */
 	size_t len;
 };
 
-struct wstr_t {
-	wchar_t *str;
-	size_t len;
-};
+/* performs a shallow copy of the given string in "in" to the string in "out"
+ * ---
+ *  in: a pointer to the original string
+ *  out: a pointer to the shallow copy of the original string
+ */
+//extern inline void str_copy(const struct str_t *in, struct str_t *out);
+
+/* attempts to deep copy the given string in "in" to the string in "out"
+ * ---
+ *  in: a pointer to the original string
+ *  out: a pointer to the deep copy of the original string
+ */
+//extern inline b32 try_str_clone(const struct str_t *in, struct str_t *out);
+
+/* Processor register types */
+typedef uint32_t reg32;
+typedef uint64_t reg64;
 
 /* Utility definitions */
 #define ARRLEN(arr) (sizeof(arr) / sizeof(arr[0]))
@@ -52,7 +69,5 @@ struct wstr_t {
 /* global variables */
 extern volatile u32 CPU_FREQ;
 extern volatile u32 BUS_FREQ;
-
-int stdlib_add(int a, int b);
 
 #endif /* HYPERMAN_STDLIB_H */

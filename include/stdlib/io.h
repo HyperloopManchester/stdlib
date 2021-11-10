@@ -1,0 +1,6 @@
+#ifndef HYPERMAN_STDLIB_IO_H
+#define HYPERMAN_STDLIB_IO_H
+
+/* TODO */
+
+#endif /* HYPERMAN_STDLIB_IO_H */
