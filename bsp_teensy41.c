@@ -363,7 +363,6 @@ void reset(void) {
 	/* enable exception handling */
 	SCB_SHCSR |= SCB_SHCSR_MEMFAULTENA | SCB_SHCSR_BUSFAULTENA | SCB_SHCSR_USGFAULTENA;
 
-	initialise_systick();
 	reset_clock_dividers();
 
 	/* reset and configure the clock sources for the periodic interrupt 
@@ -389,6 +388,7 @@ void reset(void) {
 	IOMUXC_GPR_GPR29 = gpio_mask;
 
 	initialise_cache();
+	initialise_systick();
 
 	main();
 

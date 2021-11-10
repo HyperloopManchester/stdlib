@@ -55,6 +55,7 @@ SECTIONS
 	.data : {
 		*(SORT_BY_ALIGNMENT(SORT_BY_NAME(.rodata*)))
 		*(SORT_BY_ALIGNMENT(SORT_BY_NAME(.data*)))
+		KEEP(*(.isr_vec))
 		. = ALIGN(16);
 	} > DTCM  AT> FLASH
 
